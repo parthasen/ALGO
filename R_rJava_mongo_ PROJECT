@@ -1,0 +1,38 @@
+##R ADMIN PROJECT
+install.packages('rJava', repos='http://www.rforge.net/')
+ad<-load("C:/RQ/oct2013/mongo/part1/Admin1000.RData")
+mytable<-cbind(SIC=output$SICCodes,Cat=output$CompanyCategory,Status=output$CompanyStatus,PostCode=output$PostCode,Inc=output$IncorporationDate,Date=output$DocumentDate)
+mytable<-data.frame(SIC=output$SICCodes,Cat=output$CompanyCategory,Status=output$CompanyStatus,PostCode=output$PostCode,Inc=output$IncorporationDate,Date=output$DocumentDate)
+mytable<-data.frame(SIC=output$SICCodes,Address=output$Addressline,Date=output$DocumentDate)
+sort(mytable[1:1000,4])# by month
+unique(mytable[1:128,4])# 81 post code , need reduction
+unique(mytable[1:128,1])# 74 Sic codes
+unique(mytable[1:128,3])# Why few companies are dissolved but have admin appoin'nt unique(mytable[1:128,3])[3]
+levels(mytable[,1])[65]
+library(MASS)
+a<-cbind(table(mytable[,3]))
+plot(a)
+a<-cbind(table(mytable[,3])/nrow(mytable))*100
+a<-table(mytable[,3])
+a<-sort(table(mytable[,6]))
+barplot(a)
+colors = c("red", "yellow", "green", "violet","orange", "blue", "pink", "cyan")
+barplot(a,col=colors)
+pie(a,col=colors)
+a<-summary(mytable[6])[1:6]
+
+for ( i in 1:nrow(mytable))
+{mytable$Zone[i]<-substr(mytable$PostCode[i], start=1, stop=4)}
+
+for ( i in 1:nrow(mytable))
+{ss<-lapply(strsplit(output$Addressline[i], " "), rev)
+ mytable$Area[i]<-ss[[i]][3]}
+
+for ( i in 1:nrow(mytable))
+{mytable$Day[i]<-substr(mytable$Date[i], start=9, stop=10)}
+
+#copy to code admin
+lgtMA<-glm( cbind(tMA, fMA) ~ a2  , family =binomial(logit),data=cleanTable)
+pbtMA<-glm( cbind(tMA,fMA) ~ a2  , family =binomial(probit),data=cleanTable)
+lgtMAD<-glm( cbind(tMAD, fMAD) ~ a1  , family =binomial(logit),data=cleanTable)
+lgtDA<-glm( cbind(tDA, fDA) ~ a2 , family =binomial(logit),data=cleanTable)
